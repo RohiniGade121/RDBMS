@@ -1,0 +1,19 @@
+create or replace function armstrong(n int) returns void
+as
+$$
+declare 
+    d int;
+    temp int;
+   s int=0;
+begin
+  temp=n;
+  while n>0
+    loop
+   n=n%10;
+   s=s+d*d*d;
+   n=n/10;
+  end loop;
+end;
+$$
+language plpgsql;
+   
