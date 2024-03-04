@@ -1,0 +1,13 @@
+create or replace function year(y int)
+returns void
+as
+$$
+ begin
+ if y%4=0 then
+  raise notice'leap year';
+ else 
+  raise notice'not leap year';
+end if;
+end;
+ $$
+  language plpgsql;
