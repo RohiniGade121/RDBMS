@@ -1,0 +1,67 @@
+create table customer(cno int primary key,
+cname varchar(20),
+city varchar(20));
+
+ create table account(a_no int primary key,
+a_type varchar(10),
+ opening_date date,
+ balance money,
+cno int references customer);
+
+ insert into customer values
+ (101,'om','pune'),
+(102,'sai','shrirampur'),
+(103,'ram','Nagar');
+
+insert into account values
+ (1,'saving','2019-6-3','9000',101),
+  (2,'current','2015-5-9','10000',101),
+ (3,'saving','2019-7-13','19000',102),
+ (4,'current','2019-4-3','90500',103);
+----------------------------------------------------------------------------------------------
+write a trigger before inserting an account record in account
+table and raise exception if balance is<500...
+
+
+create or replace fun1()
+returns trigger
+as
+$$
+ begin
+  if(new.balance<'500') then
+   raise exception'Balnace less than 5000 is not allowed';
+ end if; 
+  return new;
+end;
+$$
+language plpgsql;
+
+create trigger t1
+before insert on account
+for each row
+execute procedure fun1();
+
+---------------calling---------------------
+
+
+insert into account values(14,'saving','2019-6-4','300',101);
+
+--------------------------------------------------------------------------------------------------------------------------
+--write a function to accept account type as input and give the maximum account balance of that type...
+
+create or replace function max_balance(account_type account.a_type%type)
+returns void
+as
+$$
+declare
+ balance1 money;
+begin
+ select max(balance) into balance1 from account where a_type=account_type;
+  raise notice'maximum balance=%',balance1;
+end;
+$$
+language plpgsql;
+
+----calling----
+select max_balance('saving');
+
