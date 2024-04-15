@@ -1,0 +1,67 @@
+create table customer(cno int primary key,
+cname varchar(20),
+city varchar(20));
+
+ create table account(a_no int primary key,
+a_type varchar(10),
+ opening_date date,
+ balance money,
+cno int references customer);
+
+ insert into customer values
+ (101,'om','pune'),
+(102,'sai','shrirampur'),
+(103,'ram','Nagar');
+
+insert into account values
+ (1,'saving','2019-6-3','9000',101),
+  (2,'current','2015-5-9','10000',101),
+ (3,'saving','2019-7-13','19000',102),
+ (4,'current','2019-4-3','90500',103);
+
+----------------------------------------------------------------------------------------------
+--write a trigger which is executed whenever update is made to the account table .
+--If the balance becomes less than 1000,print an error message that balance cannot be less than 1000...
+
+create or replace function fun2() returns trigger 
+as 
+$$
+ begin
+  if(new.balance<'1000') then
+  raise exception'Balnce cannot less than 1000';
+ end if;
+return new;
+end;
+$$
+language plpgsql;
+
+create trigger t2
+before update on account
+for each row
+execute procedure fun2();
+
+---calling----
+update account set balance='500' where a_type='saving'; 
+
+
+----------------------------------------------------------------------------------------------------------------
+--write a function which accepts account no as input and prints the details of that account..
+
+create or replace function dispaccnt(no account.a_no%type)
+returns void
+as
+$$
+declare
+r1 account%rowtype;
+begin
+  select * into r1 from account where a_no=no;
+  raise notice'Account ano=%',r1.a_no;
+  raise notice'account type=%',r1.a_type;
+ raise notice'opening date=%',r1.opening_date;
+  raise notice'Balance=%',r1.balance;
+end;
+$$
+language plpgsql; 
+
+----calling-----
+select dispaccnt('1');
