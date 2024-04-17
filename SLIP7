@@ -1,0 +1,78 @@
+create table item(item_no integer primary key,
+itemname varchar(20));
+
+create table supplier(supplier_no integer primary key,
+supplier_name varchar(20),
+city varchar(20));
+
+ create table item_supplier(item_no integer references item,
+  supplier_no integer references supplier,
+rate money,
+ quantity integer);
+
+ insert into item values
+ (1,'books'),
+(2,'notebooks'),
+(3,'pencil');
+
+
+insert into supplier values
+ (101,'om','pune'),
+ (102,'sai','pune'),
+(103,'ram','shrirampur'),
+(104,'sham','nagar');
+
+insert into item_supplier values
+  (1,101,'200',10),
+(1,102,'100',30),
+(2,103,'250',20),
+(3,102,'150',19);
+
+
+----------------------------------------------------------------------------------------------------------
+--write a trigger before insert or update on rate field.If the rate is 
+--less than 50 then the appropriate exception....
+
+create or replace function fun1()
+returns trigger 
+as
+$$
+begin
+  if(new.rate<'50') then
+   raise exception'rate is less than 50 is not allowed!';
+end if;
+ return new;
+end;
+$$
+language plpgsql;
+
+
+create trigger t1
+before insert or update on item_supplier
+for each row 
+execute procedure fun1();
+---calling---
+insert into item_supplier values(111,101,'20',10);
+
+--------calling-----------
+
+insert into item_supplier values(1,101,'20',10);
+
+
+----------------------------------------------------------------------------------------------------
+--write a function to accept the city name as input and returns the number of suppliers living in that city..
+
+create or replace function count_supplier(city1 supplier.city%type)
+returns int
+as
+$$
+declare
+cnt int;
+begin
+  select count(city) into cnt from supplier where city=city1;
+  return cnt;
+end;
+$$
+language plpgsql;
+---calling---
+select count_supplier('pune');
