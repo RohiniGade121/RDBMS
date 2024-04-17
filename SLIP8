@@ -1,0 +1,76 @@
+create table student(roll_no int primary key,
+sname varchar(20),
+sclasss char(20));
+
+create table teacher(t_no int primary key,
+tname char(20),
+experience int);
+
+ create table st(roll_no int references student,
+ t_no int references teacher,
+subject text);
+
+insert into student values
+ (101,'om','fybcs'),
+(102,'sai','sybcs'),
+(103,'ram','tybcs'),
+(104,'sham','fybcs');
+
+insert into teacher values
+ (1,'prof.vishakha',5),
+(2,'prof.Geeeta',6),
+(3,'prof.Alka',10),
+(4,'prof.Deshmukh',13);
+
+insert into st values
+(101,1,'Java'),
+(103,2,'DBMS'),
+(102,3,'RDBMS'),
+(104,4,'C++'),
+(103,2,'python');
+
+
+----------------------------------------------------------------------------------------------------
+write a trigger before insert the record of the student in the student table.
+If the roll_no is less than or equal to zero then the trigger
+gets fired and displays the message"Invalid Roll Number"......
+
+
+create or replace function fun2()
+returns trigger 
+as 
+$$
+begin
+  if(new.roll_no<=0) then
+  raise exception'Invalid Roll Number';
+end if;
+return new;
+end;
+$$
+language plpgsql;
+
+create trigger t2
+before insert on student
+for each row
+execute procedure fun2();
+----calling---
+insert into student values (-1,'om','fybcs');
+-----------------------------------------------------------------------------------------------------------------
+
+--write a stored function to count the number of teachers having experience>10 years...
+
+create or replace function cnt_teacher() 
+returns int
+as
+$$
+declare
+ cnt int;
+begin
+  select count(tname) into cnt from teacher where experience>10;
+  return cnt;
+end;
+$$
+language plpgsql;
+
+---calling---
+select cnt_teacher();
