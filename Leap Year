@@ -1,6 +1,6 @@
 create or replace function year(y int)
 returns void
-as
+as 
 $$
  begin
  if y%4=0 then
