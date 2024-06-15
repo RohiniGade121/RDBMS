@@ -1,1 +1,61 @@
 
+create table car (cno int primary key,
+owner varchar(20),
+model varchar(10),
+ color varchar(10));
+
+create table driver(dno int primary key,
+driver_name varchar(20),
+ license_no int ,
+d_age int,
+salary float);
+
+create table car_driver(cno int references car,
+ dno int references driver);
+
+insert into car values
+ (1,'Mr.Om','honda','grey'),
+(2,'Mr.Sham','kia','black'),
+(3,'Miss.Seeta','hyundai','white');
+
+ 
+insert into driver values
+(101,'mr.vikas',123456,29,30000),
+(102,'mr.Shankar',123789,25,50000),
+(103,'mr.Neeta',654321,29,40000);
+
+insert into car_driver values
+ (1,101),
+(2,101),
+(2,103),
+(3,102);
+
+
+-------------------------------------------------------------------------------------------
+write a trigger before insert/update on driver.Raise exception if driver salary is negative or zero...
+
+create or replace function fun1()
+returns trigger
+as 
+$$
+ begin
+ if(new.salary<=0)
+  raise exception'Invalid Salry';
+end if;
+return new;
+end;
+$$
+language plpgsql;
+
+
+
+create trigger t1
+before insert or update on driver
+for each row
+execute procedure fun1();
+
+-------------------calling-----------------
+insert into driver values
+(111,'mr.vikas',123456,29,-30000);
+
+
