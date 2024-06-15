@@ -1,1 +1,71 @@
 
+create table department(dno int primary key,
+ dname varchar(30),
+ city varchar(10));
+
+
+create table employee(eno int primary key,
+ ename varchar(30),
+ salary money,
+dno int references department);
+  
+  
+  insert into department values
+  (101,'Computer Sci','pune'),
+  (102,'Chemistry ','Mumbai'),
+  (103,'commerce','Nagar'),
+  (104,'Art','Shrirampur');
+
+
+   insert into employee values
+  (1,'Mr.Saish','50000',101),
+  (2,'Miss.Geeta','40000',101),
+  (3,'Miss.Sakshi','60000',102),
+  (4,'Mr.Sagar','60000',103),
+   (5,'Miss.Reeta','14000',103),
+   (6,'Mr.Bappa','80000',104);
+
+---------------------------------------------------------------------------------
+
+write a trigger before updating an employee record in the employee table.
+Raise a notice and display the message"Employee record is being updated"...
+
+create or replace function fun1()
+returns triggers 
+as
+$$
+begin
+  raise notice''Employee record is being updated";
+end;
+$$
+language plpgsql;
+
+create trigger t1
+before update on employee
+for each row
+execute procedure fun1();
+
+------------calling-----------
+
+
+
+--------------------------------------------------------------------------------------------------------------
+
+
+--write a function to accept department name and display the average salary of employee in that department
+
+create or replace function avg_salary(name1 department.dname%type)
+returns void
+as
+$$
+declare
+ average_salary float;
+begin
+  select avg(salary) into average_salary from department,employee where department.dno=employee.dno and dname=name1;
+  raise notice'Average Salary=%',average_salary;
+ end;
+$$
+language plpgsql;
+
+---calling---
+select avg_salary('Art');
