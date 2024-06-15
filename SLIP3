@@ -1,1 +1,44 @@
 
+create table customer(cno int primary key,
+cname varchar(20),
+city varchar(20));
+
+ create table account(a_no int primary key,
+a_type varchar(10),
+ opening_date date,
+ balance money,
+cno int references customer);
+
+ insert into customer values
+ (101,'om','pune'),
+(102,'sai','shrirampur'),
+(103,'ram','Nagar');
+
+insert into account values
+ (1,'saving','2019-6-3','9000',101),
+  (2,'current','2015-5-9','10000',101),
+ (3,'saving','2019-7-13','19000',102),
+ (4,'current','2019-4-3','90500',103);
+
+-------------------------------------------------------------------------------------------------
+write a trigger before deleting an account record from account table.
+Raise a notice and display the message"account record is being deleted".
+
+
+
+create or replace function fun1()
+ returns trigger
+as
+$$
+begin
+  raise notice'Account record is being deleted';
+end;
+$$
+language plpgsql;
+
+create trigger t1
+before delete on account
+for each row
+execute procedure fun1();
+
+-------------calling--------------
