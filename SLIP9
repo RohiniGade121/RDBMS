@@ -1,1 +1,66 @@
 
+create table student(roll_no int primary key,
+sname varchar(20),
+sclasss char(20));
+
+create table teacher(t_no int primary key,
+tname char(20),
+experience int);
+
+ create table st(roll_no int references student,
+ t_no int references teacher,
+subject text);
+
+insert into student values
+ (101,'om','fybcs'),
+(102,'sai','sybcs'),
+(103,'ram','tybcs'),
+(104,'sham','fybcs');
+
+insert into teacher values
+ (1,'prof.vishakha',5),
+(2,'prof.Geeeta',6),
+(3,'prof.Alka',10),
+(4,'prof.Deshmukh',3);
+
+insert into st values
+(101,1,'Java'),
+(103,2,'DBMS'),
+(102,3,'RDBMS'),
+(104,4,'C++'),
+(103,2,'python');
+
+-------------------------------------------------------------------------------------
+write a trigger before inserting the teacher record into a teacher
+table.Experience should be a minimum of 4 years.If it is less than 4
+years trigger gets fired and displays an apppropriate message....
+
+
+create or replace function fun1()
+returns trigger
+as
+$$
+ begin
+  if(new.experience<4)then
+   raise exception'experience is less than 4 years not allowed';
+end if;
+return new;
+end;
+$$
+language plpgsql;
+
+create trigger t1
+before insert on teacher
+for each row 
+execute procedure fun1();
+
+---------------calling-----------------
+
+
+insert into teacher values(12,'prof.vishakha',1);
+
+
+
+
+
+
